@@ -58,8 +58,8 @@ def get_reni_dim(immat, q : int):
     ns =[]
 
     for w in ws:
-        ns.append(reni_entropy(convolve(immat, np.ones((w, w)),
-                    mode='constant')[::w, ::w] / np.mean(immat), q))
+        conv = convolve(immat, np.ones((w, w)), mode='constant')[::w, ::w]
+        ns.append(reni_entropy(conv / np.sum(conv), q))
 
     x = -np.log(ws)
     y = ns
