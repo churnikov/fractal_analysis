@@ -183,3 +183,41 @@ def multifractal_spectre(immat, rs=range(2, 10)) -> list:
         frac_spec.append(fractal_dimension(frac_im))
 
     return frac_spec
+
+######## Multifractal spectre with stat summ ########
+def mu(p_mat, q):
+    """
+    - $\mu_i(q, l) = \frac{p_i^q(l)}{\sum_{i=1}^N p_i^q(l)}$
+        - $l$ - размер ячеек разбиения
+        - $N$ - К-во ячеек разбиения
+    """
+    pow_mat = np.power(p_mat, q)
+    return pow_mat / np.sum(pow_mat)
+
+def calc_alpha(imar, q=10, ws=range(2, 10)):
+    """
+    $\alpha(q)=\underset{l \rightarrow 0}{lim}\frac{\sum_{i=1}^N ln(p_i(l))\mu_i(q, l)}{ln(l)}$
+    """
+    ns = []
+    for w in ws:
+        conv = convolve(imar, np.ones((w, w)), mode='constant')[::w, ::w]
+        pi_mat = conv / np.sum(conv)
+
+        mu_mat = mu(pi_mat, q)
+
+        ns.append(np.sum(np.log(pi_mat) * mu_mat))
+    return linregress(np.log(ws), ns).slope
+
+def calc_f(imar, q=10, ws=range(2, 10)):
+    """
+    $f(q)=\underset{l \rightarrow 0}{lim}\frac{\mu_i(q, l) ln \mu_i(q, l)}{ln(l)}$
+    """
+    ns = []
+    for w in ws:
+        conv = convolve(imar, np.ones((w, w)), mode='constant')[::w, ::w]
+        pi_mat = conv / np.sum(conv)
+
+        mu_mat = mu(pi_mat, q)
+
+        ns.append(np.sum(np.log(mu_mat) * mu_mat))
+    return linregress(np.log(ws), ns).slope
