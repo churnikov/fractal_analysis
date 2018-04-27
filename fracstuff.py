@@ -186,18 +186,17 @@ def multifractal_spectre(immat, rs=range(2, 10)) -> list:
 
 ######## Multifractal spectre with stat summ ########
 def mu(p_mat, q):
-    """
-    - $\mu_i(q, l) = \frac{p_i^q(l)}{\sum_{i=1}^N p_i^q(l)}$
-        - $l$ - размер ячеек разбиения
-        - $N$ - К-во ячеек разбиения
-    """
+    
+    #- $\mu_i(q, l) = \frac{p_i^q(l)}{\sum_{i=1}^N p_i^q(l)}$
+    #    - $l$ - размер ячеек разбиения
+    #    - $N$ - К-во ячеек разбиения
+    
     pow_mat = np.power(p_mat, q)
     return pow_mat / np.sum(pow_mat)
 
 def calc_alpha(imar, q=10, ws=range(2, 10)):
-    """
-    $\alpha(q)=\underset{l \rightarrow 0}{lim}\frac{\sum_{i=1}^N ln(p_i(l))\mu_i(q, l)}{ln(l)}$
-    """
+
+    # $\alpha(q)=\underset{l \rightarrow 0}{lim}\frac{\sum_{i=1}^N ln(p_i(l))\mu_i(q, l)}{ln(l)}$
     ns = []
     for w in ws:
         conv = convolve(imar, np.ones((w, w)), mode='constant')[::w, ::w]
@@ -209,9 +208,7 @@ def calc_alpha(imar, q=10, ws=range(2, 10)):
     return linregress(np.log(ws), ns).slope
 
 def calc_f(imar, q=10, ws=range(2, 10)):
-    """
-    $f(q)=\underset{l \rightarrow 0}{lim}\frac{\mu_i(q, l) ln \mu_i(q, l)}{ln(l)}$
-    """
+    # $f(q)=\underset{l \rightarrow 0}{lim}\frac{\mu_i(q, l) ln \mu_i(q, l)}{ln(l)}$
     ns = []
     for w in ws:
         conv = convolve(imar, np.ones((w, w)), mode='constant')[::w, ::w]
